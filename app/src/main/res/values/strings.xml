@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">MAD9042_Week2</string>
+    <string name="flashlight">Flashlight on/off</string>
+    <string name="vibrate">Run vibration pattern</string>
+
+</resources>
