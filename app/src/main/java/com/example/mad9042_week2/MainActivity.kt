@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
+        //Get the screen background so that you can change its color
         screenBackground = findViewById(R.id.screenBackground)
 
 
@@ -99,9 +99,11 @@ class MainActivity : AppCompatActivity() {
 
         //sensor example. Look at powerpoint slides on sensor readings.
         mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+        //Now get a sensor:
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION)
         mSensorManager.registerListener(
-            OrientationListener(), // look at line 113 for class declaration
+            OrientationListener(), // look at line 125 for class declaration
             mSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
@@ -109,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
         mSensorManager.registerListener(
-            AmbientLightListener(), // look at line 133 for class definition
+            AmbientLightListener(), // look at line 145 for class definition
             mSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
