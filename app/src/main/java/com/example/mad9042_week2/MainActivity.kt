@@ -91,7 +91,9 @@ class MainActivity : AppCompatActivity() {
 
             val pattern = longArrayOf(500, 500, 500, 500)
             val amplitudes = intArrayOf(0, 255, 0, 128)
-            vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
+            // api 26 or newer: vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
+
+            vibrateMotor.vibrate(pattern, -1);
         }
         //end of vibration example
 
@@ -148,7 +150,12 @@ class MainActivity : AppCompatActivity() {
             val values = event.values
             Log.i("Light:", "Lux:"+ values[0])
             maxLight = Math.max(maxLight, values[0])
-            screenBackground.setBackgroundColor(Color.rgb( 1.0f, values[0]/maxLight, values[0]/maxLight))
+            val intensity = (values[0]*255.0/maxLight).toInt()
+           //Api 26 or newer: screenBackground.setBackgroundColor(Color.rgb( 1.0f, values[0]/maxLight, values[0]/maxLight))
+
+            //API 25 or lower:
+            val color =  Color.argb(255,  255, intensity, intensity)
+            screenBackground.setBackgroundColor(color)
         }
 
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
