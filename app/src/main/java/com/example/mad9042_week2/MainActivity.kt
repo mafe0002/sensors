@@ -27,6 +27,11 @@ class MainActivity : AppCompatActivity() {
     private var mSensor: Sensor? = null
 
     var maxLight = 0.0f
+    var ambLight = 0.0f
+    var xInitial = 0.0f
+    var isXinitial = true
+
+    lateinit var vibrateMotor : Vibrator
 
     var flashLightStatus = false
     var deviceHasCameraFlash: Boolean = false
@@ -85,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
         //Vibration example. Look at powerpoint slides on vibration
         val vibrateButton = findViewById<Button>(R.id.vibrate_button)
-        val vibrateMotor = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrateMotor = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         vibrateButton.setOnClickListener{
 
@@ -93,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             val amplitudes = intArrayOf(0, 255, 0, 128)
             // api 26 or newer: vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
 
-            vibrateMotor.vibrate(pattern, -1);
+            vibrateMotor.vibrate(pattern, -1)
         }
         //end of vibration example
 
@@ -125,14 +130,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     inner class OrientationListener : SensorEventListener {
+
         override fun onSensorChanged(event: SensorEvent) {
             val values = event.values
+
+            if (isXinitial == true){
+                xInitial = values[0]
+                isXinitial = false
+            }
 
             val x = values[0]
             val y = values[1]
             val z = values[2]
 
-            xEditText.setText("X: $x")
+            var angleDiff = Math.abs(xInitial - x)
+
+
+            if(y > 0 && ambLight < 100){
+
+                //turning flash light on
+                camManager.setTorchMode(cameraId, true)
+
+            }else{
+
+                //turning flash light off
+                camManager.setTorchMode(cameraId, false)
+
+            }
+
+            if(angleDiff > 45){
+
+                val pattern = longArrayOf(500, 500, 500, 500)
+                val amplitudes = intArrayOf(0, 255, 0, 128)
+                // api 26 or newer: vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
+
+                vibrateMotor.vibrate(pattern, -1)
+            }
+            xEditText.setText("X: $x, light: $ambLight")
             yEditText.setText("Y: $y")
             zEditText.setText("Z: $z")
         }
@@ -149,6 +183,7 @@ class MainActivity : AppCompatActivity() {
         override fun onSensorChanged(event: SensorEvent) {
             val values = event.values
             Log.i("Light:", "Lux:"+ values[0])
+            ambLight=values[0]
             maxLight = Math.max(maxLight, values[0])
             val intensity = (values[0]*255.0/maxLight).toInt()
            //Api 26 or newer: screenBackground.setBackgroundColor(Color.rgb( 1.0f, values[0]/maxLight, values[0]/maxLight))
