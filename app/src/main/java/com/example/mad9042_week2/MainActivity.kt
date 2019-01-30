@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     var deviceHasCameraFlash: Boolean = false
 
 
+    var initialItime = System.currentTimeMillis()
     lateinit var camManager : CameraManager
     lateinit var cameraId : String
 
@@ -158,14 +159,20 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-            if(angleDiff > 45){
+            var currentTime = System.currentTimeMillis()
 
-                val pattern = longArrayOf(500, 500, 500, 500)
-                val amplitudes = intArrayOf(0, 255, 0, 128)
-                // api 26 or newer: vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
+             if(currentTime - initialItime > 5 && angleDiff > 45){
+                 val pattern = longArrayOf(500, 500, 500, 500)
+                 val amplitudes = intArrayOf(0, 255, 0, 128)
+                 // api 26 or newer: vibrateMotor.vibrate(VibrationEffect.createWaveform(pattern, amplitudes, -1) )
 
-                vibrateMotor.vibrate(pattern, -1)
-            }
+                 vibrateMotor.vibrate(pattern, -1)
+
+             }
+
+             initialItime = currentTime
+
+
             xEditText.setText("X: $x, light: $ambLight")
             yEditText.setText("Y: $y")
             zEditText.setText("Z: $z")
